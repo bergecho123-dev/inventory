@@ -33,7 +33,8 @@ export function AuthProvider({ children }) {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const response = await fetch(`${baseUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
@@ -58,7 +59,8 @@ export function AuthProvider({ children }) {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const response = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

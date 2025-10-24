@@ -30,7 +30,8 @@ export function AdminDashboard() {
   const fetchInventory = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/inventory`, {
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const response = await fetch(`${baseUrl}/inventory`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -61,7 +62,8 @@ export function AdminDashboard() {
   const handleDeleteItem = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/inventory/${id}`, {
+        const baseUrl = import.meta.env.VITE_API_URL || "/api"
+        const response = await fetch(`${baseUrl}/inventory/${id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         })
@@ -88,9 +90,8 @@ export function AdminDashboard() {
       }
 
       const method = editingItem ? "PUT" : "POST"
-      const url = editingItem
-        ? `${process.env.REACT_APP_API_URL}/inventory/${editingItem.id}`
-        : `${process.env.REACT_APP_API_URL}/inventory`
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const url = editingItem ? `${baseUrl}/inventory/${editingItem.id}` : `${baseUrl}/inventory`
 
       const response = await fetch(url, {
         method,
@@ -113,31 +114,31 @@ export function AdminDashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-green-900 via-blue-800 to-green-700">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar title="Admin Dashboard" />
         <div className="flex-1 overflow-auto p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Total Items</p>
               <p className="text-3xl font-bold text-blue-600">{items.length}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Low Stock Items</p>
               <p className="text-3xl font-bold text-red-600">{items.filter((i) => i.quantity <= 10).length}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Categories</p>
               <p className="text-3xl font-bold text-green-600">{new Set(items.map((i) => i.category)).size}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Total Quantity</p>
               <p className="text-3xl font-bold text-purple-600">{items.reduce((sum, i) => sum + i.quantity, 0)}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">Inventory Items</h2>
               <button

@@ -10,6 +10,8 @@ import { Analytics } from "./pages/Analytics"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { NotFound } from "./pages/NotFound"
 import { Unauthorized } from "./pages/Unauthorized"
+import { Inventory } from "./pages/Inventory"
+import { Users } from "./pages/Users"
 
 export function App() {
   return (
@@ -22,8 +24,24 @@ export function App() {
           <Route
             path="/admin-dashboard"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute allowedRoles={["admin", "store_manager"]}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inventory"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "store_manager", "employee"]}>
+                <Inventory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <Users />
               </ProtectedRoute>
             }
           />

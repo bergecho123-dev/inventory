@@ -14,4 +14,12 @@ export class GetInventoryUseCase {
   async executeLowStock(threshold = 10) {
     return await this.inventoryRepository.findLowStockItems(threshold)
   }
+
+  async updateItem(id, partialItem) {
+    return await this.inventoryRepository.update(id, partialItem)
+  }
+
+  async deleteItem(id) {
+    return await this.inventoryRepository.delete(id)
+  }
 }

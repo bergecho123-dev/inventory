@@ -19,7 +19,8 @@ export function ActivityLog() {
   const fetchActivities = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/activity-logs`, {
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const response = await fetch(`${baseUrl}/activity-logs`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -51,12 +52,12 @@ export function ActivityLog() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-green-900 via-blue-800 to-green-700">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar title="Activity Log" />
         <div className="flex-1 overflow-auto p-6">
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>

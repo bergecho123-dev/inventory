@@ -19,7 +19,8 @@ export function Login() {
 
     try {
       const result = await login(email, password)
-      if (result.user.role === "admin") {
+      const role = result.user.role
+      if (role === "admin" || role === "store_manager") {
         navigate("/admin-dashboard")
       } else {
         navigate("/user-dashboard")
