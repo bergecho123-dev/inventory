@@ -8,6 +8,8 @@ import { ActivityLog } from "./pages/ActivityLog"
 import { Reports } from "./pages/Reports"
 import { Analytics } from "./pages/Analytics"
 import { ProtectedRoute } from "./components/ProtectedRoute"
+import { NotFound } from "./pages/NotFound"
+import { Unauthorized } from "./pages/Unauthorized"
 
 export function App() {
   return (
@@ -16,11 +18,29 @@ export function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
           <Route
             path="/admin-dashboard"
             element={
               <ProtectedRoute requiredRole="admin">
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* Alias routes used by sidebar */}
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "store_manager", "employee"]}>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/activity-log"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "store_manager"]}>
+                <ActivityLog />
               </ProtectedRoute>
             }
           />
@@ -33,22 +53,6 @@ export function App() {
             }
           />
           <Route
-            path="/activity-log"
-            element={
-              <ProtectedRoute>
-                <ActivityLog />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/reports"
-            element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/analytics"
             element={
               <ProtectedRoute>
@@ -57,6 +61,7 @@ export function App() {
             }
           />
           <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </Router>

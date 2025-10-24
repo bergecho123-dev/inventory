@@ -3,16 +3,31 @@ import React, { createContext, useState, useCallback, useEffect, useContext } fr
 export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem("token") || null)
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user")
+      return stored ? JSON.parse(stored) : null
+    } catch {
+      return null
+    }
+  })
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (token) {
-      // optionally fetch user from token/session
+    // Rehydrate user if token exists but user state is empty
+    if (token && !user) {
+      try {
+        const stored = localStorage.getItem("user")
+        if (stored) {
+          setUser(JSON.parse(stored))
+        }
+      } catch {
+        // ignore JSON parse errors
+      }
     }
-  }, [token])
+  }, [token, user])
 
   const register = useCallback(async (name, email, password) => {
     setLoading(true)
