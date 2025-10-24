@@ -1,12 +1,5 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { useAuth } from "../hooks/useAuth"
-import { Sidebar } from "../components/Sidebar"
-import { Navbar } from "../components/Navbar"
-import { InventoryChart } from "../components/Charts/InventoryChart"
-import { StockLevelChart } from "../components/Charts/StockLevelChart"
-import { ActivityChart } from "../components/Charts/ActivityChart"
+import React, { useEffect, useState } from "react"
+import { useAuth } from "../context/AuthContext"
 
 export function Analytics() {
   const { token } = useAuth()
@@ -21,11 +14,12 @@ export function Analytics() {
   const fetchData = async () => {
     try {
       setLoading(true)
+      const baseUrl = import.meta.env.VITE_API_URL
       const [itemsRes, activitiesRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_API_URL}/inventory`, {
+        fetch(`${baseUrl}/inventory`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${process.env.REACT_APP_API_URL}/activity-logs`, {
+        fetch(`${baseUrl}/activity-logs`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ])
