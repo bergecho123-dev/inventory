@@ -21,7 +21,7 @@ export class UserController {
       const registerUC = new (await import("../../application/use-cases/RegisterUserUseCase.js")).RegisterUserUseCase(
         this.userRepository,
       )
-      const user = await registerUC.execute(name, email, password, role)
+      const user = await registerUC.execute(name, email, password, role, req.body.profile_image || null)
       res.status(201).json(user)
     } catch (error) {
       next(error)
