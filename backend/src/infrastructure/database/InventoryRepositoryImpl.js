@@ -10,8 +10,8 @@ export class InventoryRepositoryImpl extends InventoryRepository {
 
   async create(item) {
     const result = await sql`
-      INSERT INTO inventory_items (name, category, quantity, unit, location, added_by, updated_by, file_path)
-      VALUES (${item.name}, ${item.category}, ${item.quantity}, ${item.unit}, ${item.location}, ${item.addedBy}, ${item.updatedBy}, ${item.filePath})
+      INSERT INTO inventory_items (name, category, quantity, unit, location, serial_number, added_by, updated_by, file_path)
+      VALUES (${item.name}, ${item.category}, ${item.quantity}, ${item.unit}, ${item.location}, ${item.serialNumber || null}, ${item.addedBy}, ${item.updatedBy}, ${item.filePath})
       RETURNING *
     `
     return this._mapToItem(result[0])
@@ -21,7 +21,7 @@ export class InventoryRepositoryImpl extends InventoryRepository {
     const result = await sql`
       UPDATE inventory_items 
       SET name = ${item.name}, category = ${item.category}, quantity = ${item.quantity}, 
-          unit = ${item.unit}, location = ${item.location}, updated_by = ${item.updatedBy}, updated_at = NOW()
+          unit = ${item.unit}, location = ${item.location}, serial_number = ${item.serialNumber || null}, updated_by = ${item.updatedBy}, updated_at = NOW()
       WHERE id = ${id}
       RETURNING *
     `
@@ -64,6 +64,7 @@ export class InventoryRepositoryImpl extends InventoryRepository {
       row.quantity,
       row.unit,
       row.location,
+      // serial number is not in entity constructor; keep filePath mapping consistent
       row.added_by,
       row.updated_by,
       row.file_path,

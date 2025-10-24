@@ -5,7 +5,7 @@ export class CreateInventoryUseCase {
     this.inventoryRepository = inventoryRepository
   }
 
-  async execute(name, category, quantity, unit, location, addedBy, filePath = null) {
+  async execute(name, category, quantity, unit, location, addedBy, filePath = null, serialNumber = null) {
     if (!name || !category || quantity < 0 || !unit) {
       throw new Error("Invalid inventory item data")
     }
@@ -24,6 +24,8 @@ export class CreateInventoryUseCase {
       new Date(),
     )
 
+    // Attach serialNumber as extra property used by repository
+    item.serialNumber = serialNumber
     return await this.inventoryRepository.create(item)
   }
 }

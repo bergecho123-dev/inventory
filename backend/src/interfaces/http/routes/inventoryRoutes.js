@@ -21,26 +21,18 @@ export function createInventoryRoutes(inventoryRepository) {
   router.get("/:id", (req, res, next) => inventoryController.getById(req, res, next))
 
   // Create item (admin and store manager only)
-  router.post(
-    "/",
-    roleMiddleware(["admin", "store_manager"]),
-    upload.single("file"),
-    (req, res, next) => inventoryController.create(req, res, next),
+  router.post("/", roleMiddleware(["store_manager"]), upload.single("file"), (req, res, next) =>
+    inventoryController.create(req, res, next),
   )
 
   // Update item (admin and store manager only)
-  router.put(
-    "/:id",
-    roleMiddleware(["admin", "store_manager"]),
-    upload.single("file"),
-    (req, res, next) => inventoryController.update(req, res, next),
+  router.put("/:id", roleMiddleware(["store_manager"]), upload.single("file"), (req, res, next) =>
+    inventoryController.update(req, res, next),
   )
 
   // Delete item (admin and store manager only)
-  router.delete(
-    "/:id",
-    roleMiddleware(["admin", "store_manager"]),
-    (req, res, next) => inventoryController.delete(req, res, next),
+  router.delete("/:id", roleMiddleware(["store_manager"]), (req, res, next) =>
+    inventoryController.delete(req, res, next),
   )
 
   return router

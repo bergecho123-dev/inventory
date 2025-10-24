@@ -9,6 +9,7 @@ export function createUserRoutes(userRepository) {
 
   router.use(authMiddleware)
   router.get("/", roleMiddleware(["admin"]), (req, res, next) => controller.getAll(req, res, next))
+  router.post("/", roleMiddleware(["admin"]), (req, res, next) => controller.create(req, res, next))
 
   return router
 }

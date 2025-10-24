@@ -51,6 +51,7 @@ export class InventoryController {
         location,
         req.user.id,
         savedFilePath,
+        req.body.serial_number || null,
       )
 
       res.status(201).json(item)

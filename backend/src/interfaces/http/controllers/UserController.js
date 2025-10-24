@@ -11,4 +11,20 @@ export class UserController {
       next(error)
     }
   }
+
+  async create(req, res, next) {
+    try {
+      const { name, email, password, role } = req.body
+      if (!name || !email || !password || !role) {
+        return res.status(400).json({ error: "Missing required fields" })
+      }
+      const registerUC = new (await import("../../application/use-cases/RegisterUserUseCase.js")).RegisterUserUseCase(
+        this.userRepository,
+      )
+      const user = await registerUC.execute(name, email, password, role)
+      res.status(201).json(user)
+    } catch (error) {
+      next(error)
+    }
+  }
 }

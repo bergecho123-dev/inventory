@@ -147,6 +147,9 @@ export function UserDashboard() {
           <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">All Inventory Items</h2>
             <InventoryTable items={items} loading={loading} onEdit={() => {}} onDelete={() => {}} />
+            <div className="mt-4 text-sm text-gray-600">
+              Items are issued by the store manager. Your borrow history appears under Reports → My Lendings (to add).
+            </div>
           </div>
         </div>
       </div>
