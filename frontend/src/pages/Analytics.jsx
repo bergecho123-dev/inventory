@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react"
-import { useAuth } from "../context/AuthContext"
+import { useAuth } from "../hooks/useAuth"
+import { Sidebar } from "../components/Sidebar"
+import { Navbar } from "../components/Navbar"
+import { InventoryChart } from "../components/Charts/InventoryChart"
+import { StockLevelChart } from "../components/Charts/StockLevelChart"
+import { ActivityChart } from "../components/Charts/ActivityChart"
 
 export function Analytics() {
   const { token } = useAuth()
@@ -14,7 +19,7 @@ export function Analytics() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const baseUrl = import.meta.env.VITE_API_URL
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
       const [itemsRes, activitiesRes] = await Promise.all([
         fetch(`${baseUrl}/inventory`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,26 +50,26 @@ export function Analytics() {
   const lowStockCount = items.filter((item) => item.quantity <= 10).length
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-green-900 via-blue-800 to-green-700">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar title="Analytics & Insights" />
         <div className="flex-1 overflow-auto p-6">
           {/* Key Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Total Items</p>
               <p className="text-3xl font-bold text-blue-600">{items.length}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Total Quantity</p>
               <p className="text-3xl font-bold text-green-600">{totalValue}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Average per Item</p>
               <p className="text-3xl font-bold text-purple-600">{averageQuantity}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Low Stock Items</p>
               <p className="text-3xl font-bold text-red-600">{lowStockCount}</p>
             </div>

@@ -10,6 +10,7 @@ export function Reports() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [reportType, setReportType] = useState("inventory")
+  const [lendings, setLendings] = useState([])
 
   useEffect(() => {
     fetchData()
@@ -18,13 +19,13 @@ export function Reports() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/inventory`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setItems(data)
-      }
+      const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const [invRes, lendRes] = await Promise.all([
+        fetch(`${baseUrl}/inventory`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${baseUrl}/lendings`, { headers: { Authorization: `Bearer ${token}` } }),
+      ])
+      if (invRes.ok) setItems(await invRes.json())
+      if (lendRes.ok) setLendings(await lendRes.json())
     } catch (error) {
       console.error("Failed to fetch data:", error)
     } finally {
@@ -72,15 +73,18 @@ export function Reports() {
   }, {})
 
   const filteredItems = reportType === "lowstock" ? items.filter((item) => item.quantity <= 10) : items
+  const totalLendings = lendings.length
+  const currentlyOut = lendings.filter((l) => !l.returned_at).length
+  const totalLentQty = lendings.reduce((s, l) => s + l.quantity, 0)
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gradient-to-br from-green-900 via-blue-800 to-green-700">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar title="Reports" />
         <div className="flex-1 overflow-auto p-6">
           {/* Report Type Selection */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Report Type</h2>
             <div className="flex space-x-4">
               <button
@@ -104,22 +108,38 @@ export function Reports() {
 
           {/* Summary Statistics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Total Items</p>
               <p className="text-3xl font-bold text-blue-600">{items.length}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Total Quantity</p>
               <p className="text-3xl font-bold text-green-600">{totalValue}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Low Stock Items</p>
               <p className="text-3xl font-bold text-red-600">{lowStockCount}</p>
+            </div>
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 md:col-span-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-gray-600 text-sm">Total Lending Records</p>
+                  <p className="text-3xl font-bold text-blue-600">{totalLendings}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Currently Out</p>
+                  <p className="text-3xl font-bold text-purple-600">{currentlyOut}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Total Quantity Lent</p>
+                  <p className="text-3xl font-bold text-emerald-600">{totalLentQty}</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Category Breakdown */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Category Breakdown</h2>
             <div className="space-y-3">
               {Object.entries(categoryBreakdown).map(([category, quantity]) => (
@@ -140,7 +160,7 @@ export function Reports() {
           </div>
 
           {/* Items Table */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               {reportType === "lowstock" ? "Low Stock Items" : "All Items"}
             </h2>
@@ -179,7 +199,7 @@ export function Reports() {
           </div>
 
           {/* Export Options */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Export Report</h2>
             <div className="flex space-x-4">
               <button

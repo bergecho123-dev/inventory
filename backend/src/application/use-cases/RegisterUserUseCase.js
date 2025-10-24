@@ -6,7 +6,7 @@ export class RegisterUserUseCase {
     this.userRepository = userRepository
   }
 
-  async execute(name, email, password, role = "employee") {
+  async execute(name, email, password, role = "employee", profileImage = null) {
     // Check if user already exists
     const existingUser = await this.userRepository.findByEmail(email)
     if (existingUser) {
@@ -18,6 +18,9 @@ export class RegisterUserUseCase {
 
     // Create new user
     const user = new User(null, name, email, passwordHash, role, true, new Date(), new Date())
+    if (profileImage) {
+      user.profileImage = profileImage
+    }
 
     // Save to repository
     const savedUser = await this.userRepository.create(user)

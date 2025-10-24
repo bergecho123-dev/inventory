@@ -15,8 +15,8 @@ export class UserRepositoryImpl extends UserRepository {
 
   async create(user) {
     const result = await sql`
-      INSERT INTO users (name, email, password_hash, role, is_active)
-      VALUES (${user.name}, ${user.email}, ${user.passwordHash}, ${user.role}, ${user.isActive})
+      INSERT INTO users (name, email, password_hash, role, is_active, profile_image)
+      VALUES (${user.name}, ${user.email}, ${user.passwordHash}, ${user.role}, ${user.isActive}, ${user.profileImage || null})
       RETURNING *
     `
     return this._mapToUser(result[0])
@@ -25,7 +25,9 @@ export class UserRepositoryImpl extends UserRepository {
   async update(id, user) {
     const result = await sql`
       UPDATE users 
-      SET name = ${user.name}, email = ${user.email}, role = ${user.role}, is_active = ${user.isActive}, updated_at = NOW()
+      SET name = ${user.name}, email = ${user.email}, role = ${user.role}, is_active = ${user.isActive}, profile_image = ${
+        user.profileImage || null
+      }, updated_at = NOW()
       WHERE id = ${id}
       RETURNING *
     `
@@ -42,7 +44,7 @@ export class UserRepositoryImpl extends UserRepository {
   }
 
   _mapToUser(row) {
-    return new User(
+    const user = new User(
       row.id,
       row.name,
       row.email,
@@ -52,5 +54,7 @@ export class UserRepositoryImpl extends UserRepository {
       row.created_at,
       row.updated_at,
     )
+    user.profileImage = row.profile_image || null
+    return user
   }
 }

@@ -7,6 +7,8 @@ import { ActivityLogRepositoryImpl } from "./infrastructure/database/ActivityLog
 import { createAuthRoutes } from "./interfaces/http/routes/authRoutes.js"
 import { createInventoryRoutes } from "./interfaces/http/routes/inventoryRoutes.js"
 import { createActivityLogRoutes } from "./interfaces/http/routes/activityLogRoutes.js"
+import { createUserRoutes } from "./interfaces/http/routes/userRoutes.js"
+import { createLendingRoutes } from "./interfaces/http/routes/lendingRoutes.js"
 import { errorMiddleware } from "./interfaces/http/middlewares/errorMiddleware.js"
 
 const app = express()
@@ -25,6 +27,8 @@ const activityLogRepository = new ActivityLogRepositoryImpl()
 app.use("/api/auth", createAuthRoutes(userRepository))
 app.use("/api/inventory", createInventoryRoutes(inventoryRepository))
 app.use("/api/activity-logs", createActivityLogRoutes(activityLogRepository))
+app.use("/api/users", createUserRoutes(userRepository))
+app.use("/api/lendings", createLendingRoutes())
 
 // Health check
 app.get("/api/health", (req, res) => {
