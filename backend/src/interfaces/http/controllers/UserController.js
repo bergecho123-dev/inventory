@@ -21,7 +21,14 @@ export class UserController {
       const registerUC = new (await import("../../application/use-cases/RegisterUserUseCase.js")).RegisterUserUseCase(
         this.userRepository,
       )
-      const user = await registerUC.execute(name, email, password, role, req.body.profile_image || null)
+      let profileImage = null
+      if (req.file) {
+        const { FileUploadService } = await import("../../infrastructure/files/FileUploadService.js")
+        const fileService = new FileUploadService()
+        const saved = fileService.saveFile(req.file)
+        profileImage = saved.filepath
+      }
+      const user = await registerUC.execute(name, email, password, role, profileImage)
       res.status(201).json(user)
     } catch (error) {
       next(error)

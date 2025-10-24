@@ -44,7 +44,7 @@ export class UserRepositoryImpl extends UserRepository {
   }
 
   _mapToUser(row) {
-    return new User(
+    const user = new User(
       row.id,
       row.name,
       row.email,
@@ -54,5 +54,7 @@ export class UserRepositoryImpl extends UserRepository {
       row.created_at,
       row.updated_at,
     )
+    user.profileImage = row.profile_image || null
+    return user
   }
 }

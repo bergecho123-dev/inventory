@@ -12,6 +12,8 @@ import { NotFound } from "./pages/NotFound"
 import { Unauthorized } from "./pages/Unauthorized"
 import { Inventory } from "./pages/Inventory"
 import { Users } from "./pages/Users"
+import { Lending } from "./pages/Lending"
+import { MyLendings } from "./pages/MyLendings"
 
 export function App() {
   return (
@@ -34,6 +36,22 @@ export function App() {
             element={
               <ProtectedRoute allowedRoles={["admin", "store_manager", "employee"]}>
                 <Inventory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lendings"
+            element={
+              <ProtectedRoute allowedRoles={["store_manager"]}>
+                <Lending />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-lendings"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "store_manager", "employee"]}>
+                <MyLendings />
               </ProtectedRoute>
             }
           />

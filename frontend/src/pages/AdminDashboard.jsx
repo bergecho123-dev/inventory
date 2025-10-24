@@ -19,6 +19,7 @@ export function AdminDashboard() {
     password: "",
     role: "store_manager",
   })
+  const [avatarFile, setAvatarFile] = useState(null)
 
   useEffect(() => {
     fetchUsers()
@@ -50,10 +51,16 @@ export function AdminDashboard() {
   const handleSubmit = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_URL || "/api"
+      const fd = new FormData()
+      fd.append("name", formData.name)
+      fd.append("email", formData.email)
+      fd.append("password", formData.password)
+      fd.append("role", formData.role)
+      if (avatarFile) fd.append("avatar", avatarFile)
       const response = await fetch(`${baseUrl}/users`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(formData),
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
       })
       if (response.ok) {
         await fetchUsers()
@@ -165,6 +172,10 @@ export function AdminDashboard() {
               <option value="store_manager">Store Manager</option>
               <option value="employee">Employee</option>
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Avatar (optional)</label>
+            <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
           </div>
         </div>
       </Modal>

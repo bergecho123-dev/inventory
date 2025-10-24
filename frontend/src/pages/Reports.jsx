@@ -10,6 +10,7 @@ export function Reports() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [reportType, setReportType] = useState("inventory")
+  const [lendings, setLendings] = useState([])
 
   useEffect(() => {
     fetchData()
@@ -19,13 +20,12 @@ export function Reports() {
     try {
       setLoading(true)
       const baseUrl = import.meta.env.VITE_API_URL || "/api"
-      const response = await fetch(`${baseUrl}/inventory`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setItems(data)
-      }
+      const [invRes, lendRes] = await Promise.all([
+        fetch(`${baseUrl}/inventory`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${baseUrl}/lendings`, { headers: { Authorization: `Bearer ${token}` } }),
+      ])
+      if (invRes.ok) setItems(await invRes.json())
+      if (lendRes.ok) setLendings(await lendRes.json())
     } catch (error) {
       console.error("Failed to fetch data:", error)
     } finally {
@@ -73,6 +73,9 @@ export function Reports() {
   }, {})
 
   const filteredItems = reportType === "lowstock" ? items.filter((item) => item.quantity <= 10) : items
+  const totalLendings = lendings.length
+  const currentlyOut = lendings.filter((l) => !l.returned_at).length
+  const totalLentQty = lendings.reduce((s, l) => s + l.quantity, 0)
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-green-900 via-blue-800 to-green-700">
@@ -116,6 +119,22 @@ export function Reports() {
             <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6">
               <p className="text-gray-600 text-sm">Low Stock Items</p>
               <p className="text-3xl font-bold text-red-600">{lowStockCount}</p>
+            </div>
+            <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 md:col-span-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-gray-600 text-sm">Total Lending Records</p>
+                  <p className="text-3xl font-bold text-blue-600">{totalLendings}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Currently Out</p>
+                  <p className="text-3xl font-bold text-purple-600">{currentlyOut}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Total Quantity Lent</p>
+                  <p className="text-3xl font-bold text-emerald-600">{totalLentQty}</p>
+                </div>
+              </div>
             </div>
           </div>
 

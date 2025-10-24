@@ -27,6 +27,12 @@ export function Sidebar() {
     if (role === "admin" || role === "store_manager") {
       items.push({ label: "Activity Log", href: "/activity-log", icon: "📋" })
     }
+    if (role === "store_manager") {
+      items.push({ label: "Lending", href: "/lendings", icon: "🔁" })
+    }
+    if (role === "employee" || role === "store_manager" || role === "admin") {
+      items.push({ label: "My Lendings", href: "/my-lendings", icon: "🧾" })
+    }
     return items
   }, [user])
 
